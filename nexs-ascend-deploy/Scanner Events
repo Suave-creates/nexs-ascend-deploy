@@ -1,0 +1,150 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 11,
+  "links": [],
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "\n\n<div style=\"\n  background: linear-gradient(135deg, #f53994, #ffdc1b, #4fe3d1, #1f92ff, #ba1e68);\n  background-size: 300% 300%;\n  animation: slide 10s ease infinite;\n  padding: 1.5rem 2rem;\n  border-radius: 1rem;\n  text-align: center;\n\">\n  <h1 style=\"\n    margin: 0;\n    font-size: 2rem;\n    color: white;\n    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);\n  \">\n    Crafted with Precision by K.ARYA\n  </h1>\n</div>\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "12.1.1",
+      "title": "New panel",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "eey7yvplzdtz4d"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 23,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "bosch_cv_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "eey7yvplzdtz4d"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH p AS (\r\n  SELECT CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '-05:3') AS now_ist,\r\n         5 AS thr_min  -- change to your threshold (minutes) or turn into a Grafana constant\r\n),\r\nscanner_map AS (\r\n  SELECT 1  AS location_id, 'Loading-1' AS scanner UNION ALL\r\n  SELECT 2 , 'MEI IN-2 ASRS EXIT HC2' UNION ALL\r\n  SELECT 3 , 'MEI-1' UNION ALL\r\n  SELECT 4 , 'MEI-1' UNION ALL\r\n  SELECT 5 , 'MEI-1 HC1 Line 1' UNION ALL\r\n  SELECT 6 , 'MEI-1 HC1 Line 2' UNION ALL\r\n  SELECT 7 , 'MEI-2 HC1 Line 3' UNION ALL\r\n  SELECT 8 , 'MEI-HC2 Line 1' UNION ALL\r\n  SELECT 9 , 'MEI-HC2 Line 2' UNION ALL\r\n  SELECT 10, 'MEI-HC2 Line 3' UNION ALL\r\n  SELECT 11, 'Mei-2 Exit' UNION ALL\r\n  SELECT 12, 'Mei-1 Exit to WH-01' UNION ALL\r\n  SELECT 13, 'Mei-1 Exit to fitting-1' UNION ALL\r\n  SELECT 14, 'Mei-2 exit to fitting-1,2' UNION ALL\r\n  SELECT 15, 'Mei-2 exit to fitting-3 Rework Line' UNION ALL\r\n  SELECT 16, 'Mei-2 Exit to fitting-3,4' UNION ALL\r\n  SELECT 17, 'F-1&2 Rewok line' UNION ALL\r\n  SELECT 18, 'Qc-1' UNION ALL\r\n  SELECT 19, 'Qc-2' UNION ALL\r\n  SELECT 20, 'Qc-2 out to rewok line' UNION ALL\r\n  SELECT 21, 'Qc-1 out to rewok line' UNION ALL\r\n  SELECT 22, 'MEI IN-1 ASRS EXIT HC1' UNION ALL\r\n  SELECT 23, 'Packing manual to Vp 120' UNION ALL\r\n  SELECT 24, 'Vp-1,120 to Vp-2,120' UNION ALL\r\n  SELECT 25, 'Packing Manual line' UNION ALL\r\n  SELECT 26, 'IT WAS BLANK,IDK' UNION ALL\r\n  SELECT 27, 'Fitting Line-1' UNION ALL\r\n  SELECT 28, 'Fitting Line-2' UNION ALL\r\n  SELECT 29, 'Fitting Line-3' UNION ALL\r\n  SELECT 30, 'Fitting Line-4' UNION ALL\r\n  SELECT 36, 'Entry WH-02 Resorter' UNION ALL\r\n  SELECT 45, 'Packing to Dispatch' UNION ALL\r\n  SELECT 46, 'Resoter -02 Parent tray fine' UNION ALL\r\n  SELECT 57, 'Resoter-02 Child tray' UNION ALL\r\n  SELECT 59, 'Resoter under'\r\n),\r\nactive AS (  -- scanners with at least one read in last thr_min minutes\r\n  SELECT DISTINCT c.location_id\r\n  FROM conveyor_tray_movement c, p\r\n  WHERE c.scan_time >= DATE_SUB(p.now_ist, INTERVAL p.thr_min MINUTE)\r\n),\r\nlast_active AS (  -- last scan time for active scanners (only scans within the window)\r\n  SELECT c.location_id, MAX(c.scan_time) AS last_scan\r\n  FROM conveyor_tray_movement c, p\r\n  WHERE c.scan_time >= DATE_SUB(p.now_ist, INTERVAL p.thr_min MINUTE)\r\n  GROUP BY c.location_id\r\n)\r\nSELECT\r\n  sm.location_id,\r\n  sm.scanner,\r\n  CASE WHEN a.location_id IS NOT NULL THEN 'ACTIVE' ELSE 'INACTIVE' END AS status,\r\n  la.last_scan AS active_last_scan  -- NULL when inactive\r\nFROM scanner_map sm\r\nLEFT JOIN active a     USING (location_id)\r\nLEFT JOIN last_active la USING (location_id)\r\nORDER BY (status = 'INACTIVE') DESC, sm.location_id;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "New panel",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "Scanner Activity",
+  "uid": "0c1f34cd-2d76-47be-a78a-b2b937ba92bf",
+  "version": 2
+}
